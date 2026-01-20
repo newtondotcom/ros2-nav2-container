@@ -1,0 +1,6 @@
+# https://gazebosim.org/docs/latest/ros2_integration/
+bridges:
+  - topic_name: /ultrasonic
+    ros_type_name: sensor_msgs/msg/Range
+    gz_type_name: gz.msgs.Range
+    direction: GZ_TO_ROS

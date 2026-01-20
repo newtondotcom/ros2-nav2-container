@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.9">
+  <world name="sonoma">
+
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sonoma%20Raceway</uri>
+    </include>
+
+  </world>
+</sdf>
