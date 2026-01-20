@@ -1,4 +1,4 @@
-FROM --platform=linux/${TARGETARCH} ros:jazzy-ros-base
+FROM --platform=linux/${TARGETARCH} osrf/ros:jazzy-desktop-full
 
 ARG USERNAME=rosuser
 ARG USER_UID=1000
@@ -26,7 +26,8 @@ RUN \
   && apt-get upgrade -y \
   && apt-get install --no-install-recommends -y \
     ssh git bash ccache htop gdb wget curl \
-    python3 python3-pip python3-venv python3-debugpy
+    python3 python3-pip python3-venv python3-debugpy \
+    ros-${ROS_DISTRO}-navigation2 ros-${ROS_DISTRO}-nav2-bringup ros-${ROS_DISTRO}-turtlebot3*
 
 # Source ROS environment automatically
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash # ROS_SETUP_SCRIPT" >> /home/$USERNAME/.bashrc

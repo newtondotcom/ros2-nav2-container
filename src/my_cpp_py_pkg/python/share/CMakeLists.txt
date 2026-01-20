@@ -1,2 +1,0 @@
-
-ament_python_install_package(shared_package)

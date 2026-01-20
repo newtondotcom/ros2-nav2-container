@@ -24,15 +24,24 @@
         }
     },
     "containerEnv": {
-        "ROS_DOMAIN_ID": "42"
+        "ROS_DOMAIN_ID": "42",
+        "XDG_RUNTIME_DIR": "/tmp",
+        "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+        "GZ_RENDER_ENGINE": "ogre2"
     },
     "runArgs": [
         "--net=host",
         "--cap-add=SYS_PTRACE",
-        "--security-opt", "seccomp=unconfined"
+        "--security-opt", "seccomp=unconfined",        
+        "--security-opt", "seccomp=unconfined",
+        "--device=/dev/dri",
+        "-e", "DISPLAY",
+        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
+        "--group-add=video"
     ],
     "mounts": [
-        "source=${localWorkspaceFolder}/.cache,target=/home/rosuser/.cache,type=bind"
+        "source=${localWorkspaceFolder}/.cache,target=/home/rosuser/.cache,type=bind",
+        "source=${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY},target=/tmp/${localEnv:WAYLAND_DISPLAY},type=bind"
     ],
     "onCreateCommand": "scripts/init-container.sh"
 }
