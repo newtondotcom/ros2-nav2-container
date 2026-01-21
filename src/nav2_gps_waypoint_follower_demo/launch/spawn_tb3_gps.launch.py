@@ -30,7 +30,9 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    gps_wpf_dir = get_package_share_directory("nav2_minimal_tb3_sim")
+    # Get the launch directory
+    gps_wpf_dir = get_package_share_directory("nav2_gps_waypoint_follower_demo")
+    simu_dir = get_package_share_directory("nav2_minimal_tb3_sim")
 
     namespace = LaunchConfiguration("namespace")
     robot_name = LaunchConfiguration("robot_name")
@@ -68,7 +70,7 @@ def generate_launch_description():
         parameters=[
             {
                 "config_file": os.path.join(
-                    gps_wpf_dir, "configs", "turtlebot3_waffle_gps_bridge.yaml"
+                    gps_wpf_dir, "config", "turtlebot3_waffle_gps_bridge.yaml"
                 ),
                 "expand_gz_topic_names": True,
                 "use_sim_time": True,
@@ -115,7 +117,7 @@ def generate_launch_description():
         "GZ_SIM_RESOURCE_PATH", os.path.join(gps_wpf_dir, "models")
     )
     set_env_vars_resources2 = AppendEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH", str(Path(os.path.join(gps_wpf_dir)).parent.resolve())
+        "GZ_SIM_RESOURCE_PATH", str(Path(os.path.join(simu_dir)).parent.resolve())
     )
 
     # Create the launch description and populate

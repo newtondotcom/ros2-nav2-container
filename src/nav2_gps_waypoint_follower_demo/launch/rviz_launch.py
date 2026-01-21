@@ -26,6 +26,7 @@ from nav2_common.launch import LaunchConfigAsBool
 
 def generate_launch_description() -> LaunchDescription:
     # Get the launch directory
+    gps_wpf_dir = get_package_share_directory("nav2_gps_waypoint_follower_demo")
 
     # Create the launch configuration variables
     namespace = LaunchConfiguration("namespace")
