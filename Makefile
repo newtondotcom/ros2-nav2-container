@@ -28,3 +28,6 @@ test:
 	colcon --log-level info build --symlink-install --event-handlers "console_direct+"
 	source install/setup.bash
 	ros2 launch patrol_behavior security_patrol_launch.py
+
+lint:
+	docker run -v .:/code --rm pipelinecomponents/ruff ruff format .
