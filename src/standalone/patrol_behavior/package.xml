@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>patrol_behavior</name>
+  <version>0.1.0</version>
+  <description>Standalone autonomous patrol behavior for security demo</description>
+  <maintainer email="dev@example.com">Developer</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav2_msgs</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>robot_description</depend>
+  <depend>simulation</depend>
+  <depend>navigation</depend>
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_image</depend>
+  <depend>ros_gz_sim</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

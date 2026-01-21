@@ -13,9 +13,7 @@ RUN \
   && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # Install sudo and add user to sudoers
-RUN apt-get update \
-  && apt-get install -y sudo \
-  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
   && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Install dependencies and some tools
@@ -25,8 +23,6 @@ RUN \
   apt-get update \
   && apt-get upgrade -y \
   && apt-get install --no-install-recommends -y \
-    ssh git bash ccache htop gdb wget curl \
-    python3 python3-pip python3-venv python3-debugpy \
     ros-${ROS_DISTRO}-navigation2 ros-${ROS_DISTRO}-nav2-bringup ros-${ROS_DISTRO}-turtlebot3*
 
 # Source ROS environment automatically

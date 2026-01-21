@@ -20,3 +20,11 @@ manual:
 
 	# Terminal 2: launch your autonomy / application demo or example. For example
 	ros2 run nav2_simple_commander demo_security
+
+kill:
+	pkill -f gz
+
+test:
+	colcon --log-level info build --symlink-install --event-handlers "console_direct+"
+	source install/setup.bash
+	ros2 launch patrol_behavior security_patrol_launch.py

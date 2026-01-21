@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Ensure script is run with bash (not sh)
 if [ -z "$BASH_VERSION" ]; then
     echo "Error: This script must be run with bash, not sh" >&2
