@@ -26,52 +26,53 @@ from nav2_common.launch import LaunchConfigAsBool
 
 def generate_launch_description() -> LaunchDescription:
     # Get the launch directory
-    bringup_dir = get_package_share_directory('navigation')
+    bringup_dir = get_package_share_directory("navigation")
 
     # Create the launch configuration variables
-    namespace = LaunchConfiguration('namespace')
-    rviz_config_file = LaunchConfiguration('rviz_config')
-    use_sim_time = LaunchConfigAsBool('use_sim_time')
+    namespace = LaunchConfiguration("namespace")
+    rviz_config_file = LaunchConfiguration("rviz_config")
+    use_sim_time = LaunchConfigAsBool("use_sim_time")
 
     # Declare the launch arguments
     declare_namespace_cmd = DeclareLaunchArgument(
-        'namespace',
-        default_value='navigation',
+        "namespace",
+        default_value="navigation",
         description=(
-            'Top-level namespace. The value will be used to replace the '
-            '<robot_namespace> keyword on the rviz config file.'
+            "Top-level namespace. The value will be used to replace the "
+            "<robot_namespace> keyword on the rviz config file."
         ),
     )
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
-        'rviz_config',
-        default_value=os.path.join(bringup_dir, 'rviz', 'nav2_default_view.rviz'),
-        description='Full path to the RVIZ config file to use',
+        "rviz_config",
+        default_value=os.path.join(bringup_dir, "rviz", "nav2_default_view.rviz"),
+        description="Full path to the RVIZ config file to use",
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='false',
-        description='Use simulation (Gazebo) clock if true')
+        "use_sim_time",
+        default_value="false",
+        description="Use simulation (Gazebo) clock if true",
+    )
 
     # Launch rviz
     start_rviz_cmd = Node(
-        package='rviz2',
-        executable='rviz2',
+        package="rviz2",
+        executable="rviz2",
         namespace=namespace,
-        arguments=['-d', rviz_config_file],
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=["-d", rviz_config_file],
+        output="screen",
+        parameters=[{"use_sim_time": use_sim_time}],
         remappings=[
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static'),
+            ("/tf", "tf"),
+            ("/tf_static", "tf_static"),
         ],
     )
 
     exit_event_handler = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=start_rviz_cmd,
-            on_exit=EmitEvent(event=Shutdown(reason='rviz exited')),
+            on_exit=EmitEvent(event=Shutdown(reason="rviz exited")),
         ),
     )
 

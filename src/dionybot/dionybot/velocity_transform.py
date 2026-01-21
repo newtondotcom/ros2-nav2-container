@@ -34,6 +34,7 @@ from px4_msgs.msg import TrajectorySetpoint, VehicleAttitude, VehicleLocalPositi
 # PX4 attitude msg stores q = (w,x,y,z) already in **FRD‑NED** frame.
 # -----------------------------------------------------------------------------
 
+
 def quat_to_yaw_ned(q):
     w, x, y, z = q
     return math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
@@ -81,7 +82,7 @@ class TwistToTrajectoryNode(Node):
         self.create_timer(0.02, self._publish_setpoint)  # 50 Hz
 
     # ---------------------------------------------------------------------
-    # Callbacks
+    # Callbacks
     # ---------------------------------------------------------------------
     def _twist_cb(self, msg: Twist):
         """Store incoming cmd_vel (base_link, FLU, ENU)."""
@@ -133,7 +134,7 @@ class TwistToTrajectoryNode(Node):
         # 3) Pack PX4 TrajectorySetpoint --------------------------------------------------
         msg = TrajectorySetpoint()
         msg.timestamp = int(Clock().now().nanoseconds / 1000)
-        msg.position[:] = [float('nan'), float('nan'), float('nan')]
+        msg.position[:] = [float("nan"), float("nan"), float("nan")]
         msg.acceleration[:] = [float("nan")] * 3
         msg.velocity[:] = v_ned.astype(float)
         msg.yaw = float("nan")  # keep current heading
@@ -145,6 +146,7 @@ class TwistToTrajectoryNode(Node):
 # --------------------------------------------------------------------------------------
 #   main
 # --------------------------------------------------------------------------------------
+
 
 def main(args=None):
     rclpy.init(args=args)

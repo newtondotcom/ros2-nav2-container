@@ -16,17 +16,29 @@ of this license document, but changing it is not allowed.
 
 import rclpy
 from rclpy.node import Node
-from px4_msgs.msg import VehicleOdometry, VehicleLocalPosition, VehicleAttitude, VehicleGlobalPosition
+from px4_msgs.msg import (
+    VehicleOdometry,
+    VehicleLocalPosition,
+    VehicleAttitude,
+    VehicleGlobalPosition,
+)
 from geometry_msgs.msg import TransformStamped
 import tf2_ros
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
+from rclpy.qos import (
+    QoSProfile,
+    QoSDurabilityPolicy,
+    QoSHistoryPolicy,
+    QoSReliabilityPolicy,
+)
 import numpy as np
+
 np.float = float
-from tf_transformations import quaternion_about_axis,  quaternion_multiply
+from tf_transformations import quaternion_about_axis, quaternion_multiply
+
 
 class OdometryToTransformNode(Node):
     def __init__(self):
-        super().__init__('odometry_to_transform_node')
+        super().__init__("odometry_to_transform_node")
 
         self.loc_pos = None
         self.att = None
@@ -35,23 +47,22 @@ class OdometryToTransformNode(Node):
             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
             history=QoSHistoryPolicy.KEEP_LAST,
-            depth=10)
-        
+            depth=10,
+        )
+
         # Create a subscriber to the /px4_1/fmu/out/vehicle_local_position topic
         self.loc_pos_sub = self.create_subscription(
             VehicleLocalPosition,
-            '/fmu/out/vehicle_local_position_v1', # 컨테이너 환경에서는 v1 생김
+            "/fmu/out/vehicle_local_position_v1",  # 컨테이너 환경에서는 v1 생김
             self.loc_pos_callback,
-            self.qos)
-
+            self.qos,
+        )
 
         # Create a subscriber to the /px4_1/fmu/out/vehicle_attitude topic
         self.att_sub = self.create_subscription(
-            VehicleAttitude,
-            '/fmu/out/vehicle_attitude',
-            self.att_callback,
-            self.qos)
-        
+            VehicleAttitude, "/fmu/out/vehicle_attitude", self.att_callback, self.qos
+        )
+
         # Create TransformStamped message
         self.t1 = TransformStamped()
 
@@ -59,40 +70,42 @@ class OdometryToTransformNode(Node):
         self.tf_broadcaster_1 = tf2_ros.TransformBroadcaster(self)
 
     def loc_pos_callback(self, msg):
-        #self.get_logger().info('Loc pos 1 received')
+        # self.get_logger().info('Loc pos 1 received')
         self.loc_pos = msg
         self.pub_transf()
 
-
     def att_callback(self, msg):
-        #self.get_logger().info('Att 1 received')
+        # self.get_logger().info('Att 1 received')
         self.att = msg
         self.pub_transf()
 
-
     def pub_transf(self):
         if self.loc_pos is not None and self.att is not None:
-        
             self.t1.header.stamp = self.get_clock().now().to_msg()
-            self.t1.header.frame_id = 'dionybot/odom'
-            self.t1.child_frame_id = 'dionybot/base_footprint'
+            self.t1.header.frame_id = "dionybot/odom"
+            self.t1.child_frame_id = "dionybot/base_footprint"
 
             # Set the translation from the local position message
             self.t1.transform.translation.x = float(self.loc_pos.y)
             self.t1.transform.translation.y = float(self.loc_pos.x)
-            self.t1.transform.translation.z = max(-float(self.loc_pos.z), 0.0)  # Apply z-axis lower limit
-            
+            self.t1.transform.translation.z = max(
+                -float(self.loc_pos.z), 0.0
+            )  # Apply z-axis lower limit
+
             # Set the rotation from the attitude message
             q_ENU_1 = self.att.q
-            q_NED_1 = quaternion_multiply(q_ENU_1, quaternion_about_axis(np.pi/2, (1, 0, 0)))
+            q_NED_1 = quaternion_multiply(
+                q_ENU_1, quaternion_about_axis(np.pi / 2, (1, 0, 0))
+            )
             self.t1.transform.rotation.w = q_NED_1[0]
-            self.t1.transform.rotation.x = q_NED_1[1] 
+            self.t1.transform.rotation.x = q_NED_1[1]
             self.t1.transform.rotation.y = -q_NED_1[2]
             self.t1.transform.rotation.z = -q_NED_1[3]
-            
+
             # Publish the transform
             self.tf_broadcaster_1.sendTransform(self.t1)
-            #self.get_logger().info("Map BaseLink transform 1 published")
+            # self.get_logger().info("Map BaseLink transform 1 published")
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -106,5 +119,6 @@ def main(args=None):
         node.destroy_node()
         rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

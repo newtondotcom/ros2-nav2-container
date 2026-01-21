@@ -26,92 +26,110 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    sim_dir = get_package_share_directory('simulation')
+    sim_dir = get_package_share_directory("simulation")
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    namespace = LaunchConfiguration('namespace')
-    use_simulator = LaunchConfiguration('use_simulator')
-    robot_name = LaunchConfiguration('robot_name')
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    namespace = LaunchConfiguration("namespace")
+    use_simulator = LaunchConfiguration("use_simulator")
+    robot_name = LaunchConfiguration("robot_name")
     # robot_sdf = LaunchConfiguration('robot_sdf')
-    pose = {'x': LaunchConfiguration('x_pose', default='-8.00'),
-            'y': LaunchConfiguration('y_pose', default='-0.50'),
-            'z': LaunchConfiguration('z_pose', default='0.01'),
-            'R': LaunchConfiguration('roll', default='0.00'),
-            'P': LaunchConfiguration('pitch', default='0.00'),
-            'Y': LaunchConfiguration('yaw', default='0.00')}
+    pose = {
+        "x": LaunchConfiguration("x_pose", default="-8.00"),
+        "y": LaunchConfiguration("y_pose", default="-0.50"),
+        "z": LaunchConfiguration("z_pose", default="0.01"),
+        "R": LaunchConfiguration("roll", default="0.00"),
+        "P": LaunchConfiguration("pitch", default="0.00"),
+        "Y": LaunchConfiguration("yaw", default="0.00"),
+    }
 
     # Declare the launch arguments
     declare_namespace_cmd = DeclareLaunchArgument(
-        'namespace',
-        default_value='',
-        description='Top-level namespace')
+        "namespace", default_value="", description="Top-level namespace"
+    )
 
     declare_use_simulator_cmd = DeclareLaunchArgument(
-        'use_simulator',
-        default_value='True',
-        description='Whether to start the simulator')
+        "use_simulator",
+        default_value="True",
+        description="Whether to start the simulator",
+    )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='true',
-        description='Use simulation (Gazebo) clock if true',
+        "use_sim_time",
+        default_value="true",
+        description="Use simulation (Gazebo) clock if true",
     )
 
     declare_robot_name_cmd = DeclareLaunchArgument(
-        'robot_name',
-        default_value='turtlebot4',
-        description='name of the robot')
+        "robot_name", default_value="turtlebot4", description="name of the robot"
+    )
 
     bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='bridge_ros_gz',
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        name="bridge_ros_gz",
         namespace=namespace,
         parameters=[
             {
-                'config_file': os.path.join(
-                    sim_dir, 'configs', 'tb4_bridge.yaml'
-                ),
-                'use_sim_time': use_sim_time,
+                "config_file": os.path.join(sim_dir, "configs", "tb4_bridge.yaml"),
+                "use_sim_time": use_sim_time,
             }
         ],
-        output='screen',
+        output="screen",
     )
 
     camera_bridge_image = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        name='bridge_gz_ros_camera_image',
+        package="ros_gz_image",
+        executable="image_bridge",
+        name="bridge_gz_ros_camera_image",
         namespace=namespace,
-        output='screen',
-        parameters=[{
-            'use_sim_time': use_sim_time,
-        }],
-        arguments=['/rgbd_camera/image'])
+        output="screen",
+        parameters=[
+            {
+                "use_sim_time": use_sim_time,
+            }
+        ],
+        arguments=["/rgbd_camera/image"],
+    )
 
     camera_bridge_depth = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        name='bridge_gz_ros_camera_depth',
+        package="ros_gz_image",
+        executable="image_bridge",
+        name="bridge_gz_ros_camera_depth",
         namespace=namespace,
-        output='screen',
-        parameters=[{
-            'use_sim_time': use_sim_time,
-        }],
-        arguments=['/rgbd_camera/depth_image'])
+        output="screen",
+        parameters=[
+            {
+                "use_sim_time": use_sim_time,
+            }
+        ],
+        arguments=["/rgbd_camera/depth_image"],
+    )
 
     spawn_model = Node(
         condition=IfCondition(use_simulator),
-        package='ros_gz_sim',
-        executable='create',
+        package="ros_gz_sim",
+        executable="create",
         namespace=namespace,
-        output='screen',
+        output="screen",
         arguments=[
-            '-name', robot_name,
-            '-topic', 'robot_description',
-            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
-            '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']],
-        parameters=[{'use_sim_time': use_sim_time}]
+            "-name",
+            robot_name,
+            "-topic",
+            "robot_description",
+            "-x",
+            pose["x"],
+            "-y",
+            pose["y"],
+            "-z",
+            pose["z"],
+            "-R",
+            pose["R"],
+            "-P",
+            pose["P"],
+            "-Y",
+            pose["Y"],
+        ],
+        parameters=[{"use_sim_time": use_sim_time}],
     )
 
     # Create the launch description and populate

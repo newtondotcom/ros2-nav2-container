@@ -10,63 +10,65 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     use_sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='true',
-        description='Use /clock if running in Gazebo/IGN'
+        "use_sim_time",
+        default_value="true",
+        description="Use /clock if running in Gazebo/IGN",
     )
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_sim_time = LaunchConfiguration("use_sim_time")
 
-    rtabmap_pkg_share = FindPackageShare('dionybot')
-    px4_off_pkg_share = FindPackageShare('px4_offboard')
+    rtabmap_pkg_share = FindPackageShare("dionybot")
+    px4_off_pkg_share = FindPackageShare("px4_offboard")
 
     spawn_robot = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([rtabmap_pkg_share, 'launch', 'spawn_robot.launch.py'])
+            PathJoinSubstitution([rtabmap_pkg_share, "launch", "spawn_robot.launch.py"])
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
-        }.items()
+            "use_sim_time": use_sim_time,
+        }.items(),
     )
 
     rtabmap = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([rtabmap_pkg_share, 'launch', 'rtabmap.launch.py'])
+            PathJoinSubstitution([rtabmap_pkg_share, "launch", "rtabmap.launch.py"])
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
-        }.items()
+            "use_sim_time": use_sim_time,
+        }.items(),
     )
 
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([rtabmap_pkg_share, 'launch', 'navigation.launch.py'])
+            PathJoinSubstitution([rtabmap_pkg_share, "launch", "navigation.launch.py"])
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,       # nav2 측 인자는 다를 수 있음
-        }.items()
+            "use_sim_time": use_sim_time,  # nav2 측 인자는 다를 수 있음
+        }.items(),
     )
 
     offboard_vel_ctrl = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([px4_off_pkg_share,
-                                  'offboard_position_control.launch.py'])
+            PathJoinSubstitution(
+                [px4_off_pkg_share, "offboard_position_control.launch.py"]
+            )
         ),
         launch_arguments={
-            'use_sim_time': use_sim_time,
-        }.items()
+            "use_sim_time": use_sim_time,
+        }.items(),
     )
-
 
     # ─────────────────────────────────────────────
     # 4) LaunchDescription 반환
     # ─────────────────────────────────────────────
-    return LaunchDescription([
-        use_sim_time_arg,
-        spawn_robot,
-        rtabmap,
-        navigation,
-        # if you want to use package in SLAM mode, comment out the line above
-        # else, uncomment the line above
-        offboard_vel_ctrl,
-    ])
+    return LaunchDescription(
+        [
+            use_sim_time_arg,
+            spawn_robot,
+            rtabmap,
+            navigation,
+            # if you want to use package in SLAM mode, comment out the line above
+            # else, uncomment the line above
+            offboard_vel_ctrl,
+        ]
+    )

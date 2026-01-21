@@ -6,9 +6,9 @@ ROS 2 node: subscribe to
   • /fmu/in/trajectory_setpoint     (px4_msgs/TrajectorySetpoint)
   • /fmu/out/vehicle_local_position (px4_msgs/VehicleLocalPosition)
 
-and print  
-   1) 현재 cmd_vel (선형 속도)  
-   2) TrajectorySetpoint 위치·속도  
+and print
+   1) 현재 cmd_vel (선형 속도)
+   2) TrajectorySetpoint 위치·속도
    3) VehicleLocalPosition 위치(x,y)·고도(z)
 
 in one compact block every 0.2 s (5 Hz).
@@ -28,13 +28,13 @@ from rclpy.qos import (
 
 class TopicMonitor(Node):
     def __init__(self):
-        super().__init__('px4_topic_monitor')
+        super().__init__("px4_topic_monitor")
 
         # 최신 메시지를 저장할 내부 변수
-        self._cmd_vel      = (0.0, 0.0, 0.0)
-        self._traj_vel     = (float('nan'),) * 3
-        self._traj_pos     = (float('nan'),) * 3
-        self._local_pos    = (float('nan'), float('nan'), float('nan'))
+        self._cmd_vel = (0.0, 0.0, 0.0)
+        self._traj_vel = (float("nan"),) * 3
+        self._traj_pos = (float("nan"),) * 3
+        self._local_pos = (float("nan"), float("nan"), float("nan"))
 
         # QoS: PX4 uORB → ROS 2 브리지 기본값과 맞추기
         qos = QoSProfile(
@@ -47,19 +47,19 @@ class TopicMonitor(Node):
         # 구독자 생성 ---------------------------------------------------------
         self.create_subscription(
             Twist,
-            '/cmd_vel',
+            "/cmd_vel",
             self._cmd_cb,
             10,
         )
         self.create_subscription(
             TrajectorySetpoint,
-            '/fmu/in/trajectory_setpoint',
+            "/fmu/in/trajectory_setpoint",
             self._traj_cb,
             qos,
         )
         self.create_subscription(
             VehicleLocalPosition,
-            '/fmu/out/vehicle_local_position',
+            "/fmu/out/vehicle_local_position",
             self._loc_cb,
             qos,
         )
@@ -90,8 +90,10 @@ class TopicMonitor(Node):
             f"trajectory position: ({tp[0]:6.2f}, {tp[1]:6.2f}, {tp[2]:6.2f}) m\n"
             f"trajectory velocity: ({tv[0]:5.2f}, {tv[1]:5.2f}, {tv[2]:5.2f}) m/s\n"
             f"local position     : ({lp[0]:7.2f}, {lp[1]:7.2f}, {lp[2]:7.2f}) m\n"
-            + "-" * 46
+            + "-"
+            * 46
         )
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -105,5 +107,5 @@ def main(args=None):
         rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

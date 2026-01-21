@@ -3,19 +3,22 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 
+
 class ImageFrameTransformer(Node):
     def __init__(self):
-        super().__init__('image_frame_transformer')
+        super().__init__("image_frame_transformer")
 
         # Color image 구독 및 변환 퍼블리셔
         self.image_sub = self.create_subscription(
-            Image, '/camera', self.image_callback, 10)
-        self.image_pub = self.create_publisher(Image, '/camera/image', 10)
+            Image, "/camera", self.image_callback, 10
+        )
+        self.image_pub = self.create_publisher(Image, "/camera/image", 10)
 
         # Depth image 구독 및 변환 퍼블리셔
         self.depth_sub = self.create_subscription(
-            Image, '/depth_camera', self.depth_callback, 10)
-        self.depth_pub = self.create_publisher(Image, '/camera/depth_image', 10)
+            Image, "/depth_camera", self.depth_callback, 10
+        )
+        self.depth_pub = self.create_publisher(Image, "/camera/depth_image", 10)
 
     def image_callback(self, msg):
         new_msg = Image()
@@ -43,6 +46,7 @@ class ImageFrameTransformer(Node):
 
         self.depth_pub.publish(new_msg)
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = ImageFrameTransformer()
@@ -50,5 +54,6 @@ def main(args=None):
     node.destroy_node()
     rclpy.shutdown()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

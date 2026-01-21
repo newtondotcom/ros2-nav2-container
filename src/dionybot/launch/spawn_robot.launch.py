@@ -5,29 +5,31 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Comm
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
-def generate_launch_description():
 
-    pkg_dionybot = get_package_share_directory('dionybot')
+def generate_launch_description():
+    pkg_dionybot = get_package_share_directory("dionybot")
 
     gazebo_models_path, ignore_last_dir = os.path.split(pkg_dionybot)
     os.environ["GZ_SIM_RESOURCE_PATH"] += os.pathsep + gazebo_models_path
 
     model_arg = DeclareLaunchArgument(
-        'model', default_value='dionybot.urdf',
-        description='Name of the URDF description to load'
+        "model",
+        default_value="dionybot.urdf",
+        description="Name of the URDF description to load",
     )
 
     sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time', default_value='True',
-        description='Flag to enable use_sim_time'
+        "use_sim_time", default_value="True", description="Flag to enable use_sim_time"
     )
 
     # Define the path to your URDF or Xacro file
-    urdf_file_path = PathJoinSubstitution([
-        pkg_dionybot,
-        "urdf",
-        LaunchConfiguration('model')  # URDF or Xacro file
-    ])
+    urdf_file_path = PathJoinSubstitution(
+        [
+            pkg_dionybot,
+            "urdf",
+            LaunchConfiguration("model"),  # URDF or Xacro file
+        ]
+    )
 
     # Node to bridge /cmd_vel and /odom
     gz_bridge_node = Node(
@@ -46,51 +48,56 @@ def generate_launch_description():
         ],
         output="screen",
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
         remappings=[
-            ('/world/sonoma/model/dionybot/link/link/sensor/lidar_2d_v2/scan', '/scan'),
-            ('/world/sonoma/model/dionybot/link/base_link/sensor/imu_sensor/imu', '/imu'),
-            ('/world/sonoma/model/dionybot/link/base_link/sensor/navsat_sensor/navsat', '/fix'),
-            ('/model/dionybot/odometry', '/odom'),
-            ('/depth_camera/points', '/camera/depth_image/points'),
-            ('/camera_info', '/camera/image/camera_info'),
-        ]
+            ("/world/sonoma/model/dionybot/link/link/sensor/lidar_2d_v2/scan", "/scan"),
+            (
+                "/world/sonoma/model/dionybot/link/base_link/sensor/imu_sensor/imu",
+                "/imu",
+            ),
+            (
+                "/world/sonoma/model/dionybot/link/base_link/sensor/navsat_sensor/navsat",
+                "/fix",
+            ),
+            ("/model/dionybot/odometry", "/odom"),
+            ("/depth_camera/points", "/camera/depth_image/points"),
+            ("/camera_info", "/camera/image/camera_info"),
+        ],
     )
 
     # Relay node to republish /camera/camera_info to /camera/image/camera_info
     relay_camera_info_node = Node(
-        package='topic_tools',
-        executable='relay',
-        name='relay_camera_info',
-        output='screen',
-        arguments=['/camera/camera_info', 'camera/image/camera_info'],
+        package="topic_tools",
+        executable="relay",
+        name="relay_camera_info",
+        output="screen",
+        arguments=["/camera/camera_info", "camera/image/camera_info"],
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-        ]
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
+        ],
     )
 
     robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='screen',
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="screen",
         parameters=[
-            {'robot_description': Command(['xacro', ' ', urdf_file_path]),
-             'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {
+                "robot_description": Command(["xacro", " ", urdf_file_path]),
+                "use_sim_time": LaunchConfiguration("use_sim_time"),
+            },
         ],
-        remappings=[
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static')
-        ]
+        remappings=[("/tf", "tf"), ("/tf_static", "tf_static")],
     )
 
     joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
-        output='screen',
-        parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}]
+        package="joint_state_publisher",
+        executable="joint_state_publisher",
+        name="joint_state_publisher",
+        output="screen",
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")}],
     )
 
     tf_broadcaster_node = Node(
@@ -99,39 +106,39 @@ def generate_launch_description():
         name="map_baselink_publisher",
         output="screen",
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
     )
 
     image_transformer_node = Node(
-        package='dionybot',
-        executable='image_transform.py',
-        name='image_transform',
-        output='screen',
+        package="dionybot",
+        executable="image_transform.py",
+        name="image_transform",
+        output="screen",
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
     )
 
     velocity_transformer_node = Node(
-        package='dionybot',
-        executable='velocity_transform.py',
-        name='velocity_transform',
-        output='screen',
+        package="dionybot",
+        executable="velocity_transform.py",
+        name="velocity_transform",
+        output="screen",
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
     )
 
     tracking_log_node = Node(
-        package='dionybot',
-        executable='tracking_log.py',
-        name='px4_topic_monitor',
-        output='screen',
+        package="dionybot",
+        executable="tracking_log.py",
+        name="px4_topic_monitor",
+        output="screen",
         parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {"use_sim_time": LaunchConfiguration("use_sim_time")},
         ],
-        prefix=['gnome-terminal -- ']
+        prefix=["gnome-terminal -- "],
     )
 
     launchDescriptionObject = LaunchDescription()
@@ -146,5 +153,5 @@ def generate_launch_description():
     launchDescriptionObject.add_action(image_transformer_node)
     launchDescriptionObject.add_action(velocity_transformer_node)
     launchDescriptionObject.add_action(tracking_log_node)
-    
+
     return launchDescriptionObject
