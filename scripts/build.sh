@@ -27,10 +27,11 @@ fi
 info "Building the project..."
 # Build all packages, explicitly including nav2_bringup which is not a dependency of other packages
 colcon --log-level info build \
-    --mixin debug ccache compile-commands gold \
+    # --mixin debug ccache compile-commands gold \
     --symlink-install \
     --event-handlers "console_direct+" \
     --packages-up-to nav2_bringup \
-    --cmake-args -DMY_CPP_NODE_FLAG=ON || fatal "Failed to build the project"
+    #--cmake-args -DMY_CPP_NODE_FLAG=ON \
+    || fatal "Failed to build the project"
 
 info "Build completed successfully"
