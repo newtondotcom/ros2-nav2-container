@@ -5,8 +5,15 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 
+from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
-from px4_msgs.msg import VehicleGpsPosition, VehicleOdometry
+from px4_msgs.msg import (
+    VehicleGpsPosition,
+    VehicleOdometry,
+    OffboardControlMode,
+    TrajectorySetpoint,
+    VehicleCommand,
+)
 from sensor_msgs.msg import NavSatFix, NavSatStatus
 
 
@@ -30,40 +37,80 @@ class Px4RosBridge(Node):
     def __init__(self):
         super().__init__("px4_ros_bridge_node")
 
-        qos_profile = QoSProfile(
+        # QoS for PX4 subscribers (incoming from PX4)
+        qos_profile_sub = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE,
             depth=10,
         )
 
+        # QoS for PX4 publishers (outgoing to PX4)
+        qos_profile_pub_px4 = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            depth=1,
+        )
+
+        # ROS standard publishers
         self.gps_pub = self.create_publisher(NavSatFix, "/gps/fix", 10)
         self.odom_pub = self.create_publisher(Odometry, "/odom", 10)
 
+        # PX4 offboard publishers
+        self.offboard_control_mode_pub = self.create_publisher(
+            OffboardControlMode, "/fmu/in/offboard_control_mode", qos_profile_pub_px4
+        )
+        self.trajectory_setpoint_pub = self.create_publisher(
+            TrajectorySetpoint, "/fmu/in/trajectory_setpoint", qos_profile_pub_px4
+        )
+        self.vehicle_command_pub = self.create_publisher(
+            VehicleCommand, "/fmu/in/vehicle_command", qos_profile_pub_px4
+        )
+
+        # PX4 subscribers
         self.gps_sub = self.create_subscription(
             VehicleGpsPosition,
             "/fmu/out/vehicle_gps_position",
             self._gps_callback,
-            qos_profile,
+            qos_profile_sub,
         )
         self.odom_sub = self.create_subscription(
             VehicleOdometry,
             "/fmu/out/vehicle_odometry",
             self._odom_callback,
-            qos_profile,
+            qos_profile_sub,
         )
+
+        # ROS cmd_vel subscriber
+        self.cmd_vel_sub = self.create_subscription(
+            Twist, "/cmd_vel", self._cmd_vel_callback, 10
+        )
+
+        # Offboard state
+        self.last_cmd_vel: Optional[Twist] = None
+        self.offboard_armed = False
 
         self.last_message_time: Optional[rclpy.time.Time] = None
         self.warned = False
         self.create_timer(5.0, self._warn_if_inactive)
 
+        # Offboard timer (20 Hz)
+        self.create_timer(0.05, self._offboard_timer_callback)
+
+        # Send ARM + OFFBOARD commands after a short delay
+        self.create_timer(2.0, self._send_arm_and_offboard_once)
+
         self.get_logger().info(
-            "PX4 -> ROS bridge started\n"
+            "PX4 <-> ROS bridge started\n"
             "Subscribing to:\n"
             " - /fmu/out/vehicle_gps_position\n"
             " - /fmu/out/vehicle_odometry\n"
+            " - /cmd_vel\n"
             "Publishing:\n"
             " - /gps/fix\n"
-            " - /odom"
+            " - /odom\n"
+            " - /fmu/in/offboard_control_mode\n"
+            " - /fmu/in/trajectory_setpoint\n"
+            " - /fmu/in/vehicle_command"
         )
 
     def _touch_activity(self):
@@ -169,6 +216,75 @@ class Px4RosBridge(Node):
             cov[7] = msg.velocity_variance[0]
             cov[14] = msg.velocity_variance[2]
         odom.twist.covariance = cov
+
+    def _cmd_vel_callback(self, msg: Twist):
+        """Cache cmd_vel for offboard control. Forward speed only, no yaw."""
+        self.last_cmd_vel = msg
+
+    def _offboard_timer_callback(self):
+        """Stream offboard control mode and trajectory setpoint at 20 Hz."""
+        if self.last_cmd_vel is None:
+            return
+
+        now = self.get_clock().now().to_msg()
+
+        # Publish OffboardControlMode
+        offboard_msg = OffboardControlMode()
+        offboard_msg.timestamp = int(self.get_clock().now().nanoseconds / 1000)
+        offboard_msg.position = False
+        offboard_msg.velocity = True
+        offboard_msg.acceleration = False
+        offboard_msg.attitude = False
+        offboard_msg.body_rate = False
+        self.offboard_control_mode_pub.publish(offboard_msg)
+
+        # Publish TrajectorySetpoint
+        setpoint = TrajectorySetpoint()
+        setpoint.timestamp = int(self.get_clock().now().nanoseconds / 1000)
+        setpoint.position[0] = float("nan")
+        setpoint.position[1] = float("nan")
+        setpoint.position[2] = float("nan")
+        setpoint.velocity[0] = self.last_cmd_vel.linear.x  # vx (forward)
+        setpoint.velocity[1] = 0.0  # vy (lateral, zero for rover)
+        setpoint.velocity[2] = 0.0  # vz (vertical, zero for rover)
+        setpoint.yaw = float("nan")  # Hold current yaw
+        setpoint.yawspeed = 0.0  # No yaw rate control
+        self.trajectory_setpoint_pub.publish(setpoint)
+
+    def _send_arm_and_offboard_once(self):
+        """Send one-time ARM and OFFBOARD commands to PX4."""
+        if self.offboard_armed:
+            return
+
+        timestamp = int(self.get_clock().now().nanoseconds / 1000)
+
+        # Command: ARM (CMD_COMPONENT_ARM_DISARM = 400)
+        arm_cmd = VehicleCommand()
+        arm_cmd.timestamp = timestamp
+        arm_cmd.command = 400  # MAV_CMD_COMPONENT_ARM_DISARM
+        arm_cmd.param1 = 1.0  # 1 = ARM
+        arm_cmd.target_system = 1
+        arm_cmd.target_component = 1
+        arm_cmd.source_system = 1
+        arm_cmd.source_component = 1
+        arm_cmd.from_external = True
+        self.vehicle_command_pub.publish(arm_cmd)
+
+        # Command: Set Mode to OFFBOARD (MAV_CMD_DO_SET_MODE = 176)
+        mode_cmd = VehicleCommand()
+        mode_cmd.timestamp = timestamp
+        mode_cmd.command = 176  # MAV_CMD_DO_SET_MODE
+        mode_cmd.param1 = 1.0  # MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+        mode_cmd.param2 = 6.0  # PX4_CUSTOM_MAIN_MODE_OFFBOARD
+        mode_cmd.target_system = 1
+        mode_cmd.target_component = 1
+        mode_cmd.source_system = 1
+        mode_cmd.source_component = 1
+        mode_cmd.from_external = True
+        self.vehicle_command_pub.publish(mode_cmd)
+
+        self.offboard_armed = True
+        self.get_logger().info("Sent ARM + OFFBOARD commands to PX4")
 
 
 def main(args=None):
