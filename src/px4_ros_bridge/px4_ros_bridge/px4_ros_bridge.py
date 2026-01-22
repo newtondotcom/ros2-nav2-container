@@ -155,7 +155,12 @@ class Px4RosBridge(Node):
             status.status = NavSatStatus.STATUS_GBAS_FIX
         nav_fix.status = status
 
-        if math.isfinite(msg.eph) and math.isfinite(msg.epv) and msg.eph > 0.0 and msg.epv > 0.0:
+        if (
+            math.isfinite(msg.eph)
+            and math.isfinite(msg.epv)
+            and msg.eph > 0.0
+            and msg.epv > 0.0
+        ):
             nav_fix.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
             nav_fix.position_covariance[0] = msg.eph * msg.eph
             nav_fix.position_covariance[4] = msg.eph * msg.eph

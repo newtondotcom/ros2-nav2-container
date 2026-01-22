@@ -18,6 +18,7 @@ graph TD
     subgraph DockServices [Dock : Relay & Recharge]
         Mission[VDA5050-compatible mission controller]
         BaseRTK[Base GNSS-RTK]
+        Panel[Control Panel: Emergency stop, RTH]
     end
 
     subgraph CloudServices [Cloud : Opérations Center]
