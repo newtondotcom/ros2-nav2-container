@@ -2,31 +2,54 @@
 
 ```mermaid
 graph TD
-    %% Services sur chaque noeud
-    subgraph RoverServices [dionybot : Rover on ROS2]
-        PX4[PX4 Firmware]
-        Nav2[Nav2 Navigation Stack]
-        GNSS[Récepteur GNSS RTK]
-        Lidar[Lidar]
-        USS[Ultrasonic Sensor]
-        Bridge[px4_ros_bridge]
-        MissionClient[VDA5050-compatible mission client]
-        Cameras[Cameras]
-        DepthCamera[Depth Camera]
-        Mux[Command Multiplexer]
-        RowFollower[RowFollower]
-        Supervisor[Supervisor FSM Node]
-        DockingServer[Docking Server]
-        EStop[Emergency Stop Button]
+    %% ===========================
+    %% ROVER SERVICES
+    %% ===========================
+    subgraph Rover [Rover ROS2]
+        %% Sensors
+        subgraph Rover_Sensors [Rover: Sensors]
+            GNSS[GNSS RTK]
+            Lidar[Lidar]
+            USS[Ultrasonic Sensor]
+            Cameras[Cameras]
+            DepthCamera[Depth Camera]
+        end
+
+        %% Controllers
+        subgraph Rover_Controllers [Rover: Controllers]
+            Nav2[Nav2 Navigation Stack]
+            RowFollower[RowFollower]
+            Mux[Command Multiplexer]
+            PX4[PX4 Firmware]
+            Bridge[px4_ros_bridge]
+        end
+
+        %% Mission
+        subgraph Rover_Mission [Rover: Mission]
+            MissionClient[VDA5050-compatible mission client]
+            Supervisor[Supervisor FSM Node]
+        end
+
+        %% Safety
+        subgraph Rover_Safety [Rover: Safety]
+            DockingServer[Docking Server]
+            EStop[Emergency Stop Button]
+        end
     end
 
-    subgraph DockServices [Dock : Relay & Recharge]
+    %% ===========================
+    %% DOCK SERVICES
+    %% ===========================
+    subgraph Dock [Dock: Relay & Recharge]
         Mission[VDA5050-compatible mission controller]
         BaseRTK[Base GNSS-RTK]
         Panel[Control Panel: Emergency stop, RTH]
     end
 
-    subgraph CloudServices [Cloud : Opérations Center]
+    %% ===========================
+    %% CLOUD SERVICES
+    %% ===========================
+    subgraph Cloud [Cloud: Operations Center]
         WebUI[Web Interface]
         Planner[Mission Planner]
     end
