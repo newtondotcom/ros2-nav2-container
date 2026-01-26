@@ -355,6 +355,7 @@ def generate_launch_description() -> LaunchDescription:
                         remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
+                            # , "enable_stamped_cmd_vel" : True
                         ],
                     ),
                     ComposableNode(
