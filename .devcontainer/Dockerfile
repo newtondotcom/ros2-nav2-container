@@ -29,6 +29,7 @@ RUN \
 
 # Source ROS environment automatically
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash # ROS_SETUP_SCRIPT" >> /home/$USERNAME/.bashrc
+RUN echo "export GZ_SIM_RESOURCE_PATH=/workspaces/ros2-devcontainer/src/nav2_gps_waypoint_follower_demo/models:/workspaces/ros2-devcontainer/src/nav2_gps_waypoint_follower_demo/worlds:$USERNAME/.gz/fuel/fuel.gazebosim.org:/usr/share/gz:/usr/share/gazebo" >> /home/$USERNAME/.bashrc
 
 ENV SHELL=/bin/bash
 USER $USERNAME
