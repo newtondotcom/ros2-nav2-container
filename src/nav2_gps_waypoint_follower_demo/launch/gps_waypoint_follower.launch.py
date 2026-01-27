@@ -28,8 +28,7 @@ def generate_launch_description():
     # Get the launch directory
     gps_wpf_dir = get_package_share_directory("nav2_gps_waypoint_follower_demo")
     launch_dir = os.path.join(gps_wpf_dir, "launch")
-    params_dir = os.path.join(gps_wpf_dir, "config")
-    nav2_params = os.path.join(params_dir, "nav2_no_map_params.yaml")
+    nav2_params = os.path.join(gps_wpf_dir, "config", "nav2_no_map_params.yaml")
     configured_params = RewrittenYaml(
         source_file=nav2_params, root_key="", param_rewrites="", convert_types=True
     )
@@ -59,7 +58,7 @@ def generate_launch_description():
 
     navigation2_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(gps_wpf_dir, "launch", "navigation_launch.py")
+            os.path.join(gps_wpf_dir, "launch", "navigation.launch.py")
         ),
         launch_arguments={
             "use_sim_time": "True",
@@ -70,7 +69,7 @@ def generate_launch_description():
 
     rviz_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(gps_wpf_dir, "launch", "rviz_launch.py")
+            os.path.join(gps_wpf_dir, "launch", "rviz.launch.py")
         ),
         condition=IfCondition(use_rviz),
     )

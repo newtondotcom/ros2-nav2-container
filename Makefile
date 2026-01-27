@@ -25,9 +25,9 @@ kill:
 	pkill -f gz
 
 test:
-	colcon --log-level info build --symlink-install --event-handlers "console_direct+"
+	bash scripts/build.sh
 	source install/setup.bash
-	ros2 launch patrol_behavior security_patrol_launch.py
+	ros2 launch nav2_gps_waypoint_follower_demo gps_waypoint_follower.launch.py
 
 lint:
 	docker run -v .:/code --rm pipelinecomponents/ruff ruff format .

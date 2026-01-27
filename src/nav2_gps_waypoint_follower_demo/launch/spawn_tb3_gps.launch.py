@@ -112,14 +112,10 @@ def generate_launch_description():
         ],
     )
 
-    resource_paths = [
-        os.path.join(gps_wpf_dir, "models"),
-        os.path.join(gps_wpf_dir, "meshes"),
-        os.path.join(gps_wpf_dir, "worlds"),
-        os.path.join(gps_wpf_dir, "urdf"),
-    ]
+    # GZ_SIM_RESOURCE_PATH needs to point to directories containing model directories
+    # For model:// URIs to work, Gazebo needs the parent directory of models/
     set_env_vars_resources = AppendEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH", resource_paths
+        "GZ_SIM_RESOURCE_PATH", gps_wpf_dir
     )
 
     # Create the launch description and populate
