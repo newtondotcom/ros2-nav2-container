@@ -25,7 +25,7 @@ RUN \
   && apt-get install --no-install-recommends -y \
     ros-${ROS_DISTRO}-navigation2 ros-${ROS_DISTRO}-nav2-bringup \
     ros-${ROS_DISTRO}-turtlebot3* \
-    ros-${ROS_DISTRO}-nav2-minimal-tb3* ros-${ROS_DISTRO}-robot-localization ros-${ROS_DISTRO}-mapviz ros-${ROS_DISTRO}-mapviz-plugins ros-${ROS_DISTRO}-tile-map ros-${ROS_DISTRO}-teleop-twist-keyboard ros-${ROS_DISTRO}-multires-image
+    ros-${ROS_DISTRO}-nav2-minimal-tb* ros-${ROS_DISTRO}-robot-localization ros-${ROS_DISTRO}-mapviz ros-${ROS_DISTRO}-mapviz-plugins ros-${ROS_DISTRO}-tile-map ros-${ROS_DISTRO}-teleop-twist-keyboard ros-${ROS_DISTRO}-multires-image
 
 # Source ROS environment automatically
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash # ROS_SETUP_SCRIPT" >> /home/$USERNAME/.bashrc
