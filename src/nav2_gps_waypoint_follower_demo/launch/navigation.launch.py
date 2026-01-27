@@ -21,7 +21,7 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import LoadComposableNodes, Node, PushROSNamespace, SetParameter
 from launch_ros.descriptions import ComposableNode, ParameterFile
-from nav2_common.launch import LaunchConfigAsBool, RewrittenYaml
+from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description() -> LaunchDescription:
@@ -29,18 +29,18 @@ def generate_launch_description() -> LaunchDescription:
     gps_wpf_dir = get_package_share_directory("nav2_gps_waypoint_follower_demo")
 
     namespace = LaunchConfiguration("namespace")
-    use_sim_time = LaunchConfigAsBool("use_sim_time")
-    autostart = LaunchConfigAsBool("autostart")
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    autostart = LaunchConfiguration("autostart")
     graph_filepath = LaunchConfiguration("graph")
     params_file = LaunchConfiguration("params_file")
-    use_composition = LaunchConfigAsBool("use_composition")
-    use_intra_process_comms = LaunchConfigAsBool("use_intra_process_comms")
+    use_composition = LaunchConfiguration("use_composition")
+    use_intra_process_comms = LaunchConfiguration("use_intra_process_comms")
     container_name = LaunchConfiguration("container_name")
     container_name_full = (namespace, "/", container_name)
-    use_respawn = LaunchConfigAsBool("use_respawn")
+    use_respawn = LaunchConfiguration("use_respawn")
     log_level = LaunchConfiguration("log_level")
-    use_keepout_zones = LaunchConfigAsBool("use_keepout_zones")
-    use_speed_zones = LaunchConfigAsBool("use_speed_zones")
+    use_keepout_zones = LaunchConfiguration("use_keepout_zones")
+    use_speed_zones = LaunchConfiguration("use_speed_zones")
 
     lifecycle_nodes = [
         "controller_server",
