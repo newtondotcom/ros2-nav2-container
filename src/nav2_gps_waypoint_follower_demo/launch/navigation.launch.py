@@ -62,7 +62,8 @@ def generate_launch_description() -> LaunchDescription:
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {"autostart": autostart}
 
-    yaml_substitutions = {
+    # Additional parameter dictionaries with LaunchConfiguration substitutions
+    zone_params = {
         "KEEPOUT_ZONE_ENABLED": use_keepout_zones,
         "SPEED_ZONE_ENABLED": use_speed_zones,
     }
@@ -80,7 +81,6 @@ def generate_launch_description() -> LaunchDescription:
             source_file=params_file,
             root_key=namespace,
             param_rewrites=param_substitutions,
-            value_rewrites=yaml_substitutions,
             convert_types=True,
         ),
         allow_substs=True,
@@ -167,7 +167,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
             ),
@@ -178,7 +178,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -189,7 +189,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -200,7 +200,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params, {"graph_filepath": graph_filepath}],
+                parameters=[configured_params, zone_params, {"graph_filepath": graph_filepath}],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -211,7 +211,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
             ),
@@ -222,7 +222,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -233,7 +233,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -244,7 +244,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
             ),
@@ -255,7 +255,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -266,7 +266,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -277,7 +277,7 @@ def generate_launch_description() -> LaunchDescription:
                 output="screen",
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, zone_params],
                 arguments=["--ros-args", "--log-level", log_level],
                 remappings=remappings,
             ),
@@ -308,7 +308,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_controller",
                         plugin="nav2_controller::ControllerServer",
                         name="controller_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -318,7 +318,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_smoother",
                         plugin="nav2_smoother::SmootherServer",
                         name="smoother_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -328,7 +328,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_planner",
                         plugin="nav2_planner::PlannerServer",
                         name="planner_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -340,6 +340,7 @@ def generate_launch_description() -> LaunchDescription:
                         name="route_server",
                         parameters=[
                             configured_params,
+                            zone_params,
                             {"graph_filepath": graph_filepath},
                         ],
                         remappings=remappings,
@@ -351,7 +352,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_behaviors",
                         plugin="behavior_server::BehaviorServer",
                         name="behavior_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -362,7 +363,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_bt_navigator",
                         plugin="nav2_bt_navigator::BtNavigator",
                         name="bt_navigator",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -372,7 +373,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_waypoint_follower",
                         plugin="nav2_waypoint_follower::WaypointFollower",
                         name="waypoint_follower",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -382,7 +383,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_velocity_smoother",
                         plugin="nav2_velocity_smoother::VelocitySmoother",
                         name="velocity_smoother",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings + [("cmd_vel", "cmd_vel_nav")],
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -392,7 +393,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="nav2_collision_monitor",
                         plugin="nav2_collision_monitor::CollisionMonitor",
                         name="collision_monitor",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -402,7 +403,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="opennav_docking",
                         plugin="opennav_docking::DockingServer",
                         name="docking_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
@@ -412,7 +413,7 @@ def generate_launch_description() -> LaunchDescription:
                         package="opennav_following",
                         plugin="opennav_following::FollowingServer",
                         name="following_server",
-                        parameters=[configured_params],
+                        parameters=[configured_params, zone_params],
                         remappings=remappings,
                         extra_arguments=[
                             {"use_intra_process_comms": use_intra_process_comms}
