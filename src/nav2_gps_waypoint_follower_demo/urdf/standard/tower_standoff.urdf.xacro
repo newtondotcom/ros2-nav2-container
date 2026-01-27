@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-<xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/icreate/common_properties.urdf.xacro"/>
+<xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/icreate/common_properties.urdf.xacro"/>
 
 <xacro:macro name="tower_standoff" params="name parent_link:=shell_link *origin">
 
@@ -20,7 +20,7 @@
     <visual>
       <origin rpy="0 ${pi/2} 0"/>
       <geometry>
-       <mesh filename="package://nav2_minimal_tb4_description/meshes/tower_standoff.dae" scale="1 1 1" />
+       <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/tower_standoff.dae" scale="1 1 1" />
       </geometry>
     </visual>
     <collision>

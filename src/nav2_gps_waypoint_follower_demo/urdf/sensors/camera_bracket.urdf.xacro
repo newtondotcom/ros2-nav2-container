@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-<xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/icreate/common_properties.urdf.xacro"/>
+<xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/icreate/common_properties.urdf.xacro"/>
 
 <xacro:macro name="camera_bracket" params="name parent_link:=shell_link *origin">
 
@@ -19,7 +19,7 @@
   <link name="${link_name}">
     <visual>
       <geometry>
-       <mesh filename="package://nav2_minimal_tb4_description/meshes/camera_bracket.dae" scale="1 1 1" />
+       <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/camera_bracket.dae" scale="1 1 1" />
       </geometry>
     </visual>
     <inertial>

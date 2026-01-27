@@ -113,7 +113,13 @@ def generate_launch_description():
     )
 
     set_env_vars_resources = AppendEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH", [os.path.join(gps_wpf_dir, "models"),os.path.join(gps_wpf_dir, "meshes"),os.path.join(gps_wpf_dir, "worlds"),os.path.join(gps_wpf_dir, "urdf")]
+        "GZ_SIM_RESOURCE_PATH",
+        [
+            os.path.join(gps_wpf_dir, "models"),
+            os.path.join(gps_wpf_dir, "meshes"),
+            os.path.join(gps_wpf_dir, "worlds"),
+            os.path.join(gps_wpf_dir, "urdf"),
+        ],
     )
 
     # Create the launch description and populate

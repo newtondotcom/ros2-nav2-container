@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
 <xacro:macro name="rplidar" params="name parent_link gazebo *origin">
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/icreate/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/icreate/common_properties.urdf.xacro"/>
 
   <xacro:property name="mass"       value="0.17"/>
   <xacro:property name="length_x"   value="${7.1*cm2m}" />
@@ -22,7 +22,7 @@
   <link name="${name}_link">
     <visual>
       <geometry>
-        <mesh filename="package://nav2_minimal_tb4_description/meshes/rplidar.dae" scale="1 1 1" />
+        <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/rplidar.dae" scale="1 1 1" />
       </geometry>
     </visual>
     <collision>

@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <robot name="turtlebot4" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Base create3 model -->
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/icreate/create3.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/sensors/rplidar.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/sensors/oakd.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/sensors/camera_bracket.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/standard/tower_standoff.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/standard/tower_sensor_plate.urdf.xacro" />
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/standard/weight_block.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/icreate/create3.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/sensors/rplidar.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/sensors/oakd.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/sensors/camera_bracket.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/standard/tower_standoff.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/standard/tower_sensor_plate.urdf.xacro" />
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/standard/weight_block.urdf.xacro" />
 
   <!-- Mechanical properties -->
   <xacro:property name="shell_z_offset"                value="${3*cm2m}" />
@@ -71,12 +71,12 @@
     <visual>
       <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
       <geometry>
-        <mesh filename="package://nav2_minimal_tb4_description/meshes/shell.dae" scale="1 1 1" />
+        <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/shell.dae" scale="1 1 1" />
       </geometry>
     </visual>
     <collision name="shell_collision">
       <geometry>
-        <mesh filename="package://nav2_minimal_tb4_description/meshes/shell_collision.dae" scale="1 1 1" />
+        <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/shell_collision.dae" scale="1 1 1" />
       </geometry>
     </collision>
     <inertial>

@@ -35,7 +35,7 @@
           <pose>-0.064 0 0 0 0 0</pose>
           <geometry>
             <mesh>
-              <uri>package://nav2_minimal_tb3_sim/models/turtlebot3_model/meshes/waffle_base.dae</uri>
+              <uri>package://nav2_gps_waypoint_follower_demo/models/turtlebot3_model/meshes/waffle_base.dae</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -124,7 +124,7 @@
           <pose>-0.064 0 0.121 0 0 0</pose>
           <geometry>
             <mesh>
-              <uri>package://nav2_minimal_tb3_sim/models/turtlebot3_model/meshes/lds.dae</uri>
+              <uri>package://nav2_gps_waypoint_follower_demo/models/turtlebot3_model/meshes/lds.dae</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -213,7 +213,7 @@
           <pose>0.0 0.144 0.023 0 0 0</pose>
           <geometry>
             <mesh>
-              <uri>package://nav2_minimal_tb3_sim/models/turtlebot3_model/meshes/tire.dae</uri>
+              <uri>package://nav2_gps_waypoint_follower_demo/models/turtlebot3_model/meshes/tire.dae</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>
@@ -273,7 +273,7 @@
           <pose>0.0 -0.144 0.023 0 0 0</pose>
           <geometry>
             <mesh>
-              <uri>package://nav2_minimal_tb3_sim/models/turtlebot3_model/meshes/tire.dae</uri>
+              <uri>package://nav2_gps_waypoint_follower_demo/models/turtlebot3_model/meshes/tire.dae</uri>
               <scale>0.001 0.001 0.001</scale>
             </mesh>
           </geometry>

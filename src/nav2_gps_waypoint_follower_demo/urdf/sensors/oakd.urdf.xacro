@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
 <xacro:macro name="oakd" params="name:=oakd parent_link *origin model:=pro">
-  <xacro:include filename="$(find nav2_minimal_tb4_description)/urdf/icreate/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find nav2_gps_waypoint_follower_demo)/urdf/icreate/common_properties.urdf.xacro"/>
 
   <xacro:property name="mass"       value="0.061"/>
   <xacro:property name="baseline" value="0.075" />
@@ -28,7 +28,7 @@
   <link name="${base_frame}">
     <visual>
       <geometry>
-        <mesh filename="package://nav2_minimal_tb4_description/meshes/${name}_${model}.dae" scale="1 1 1" />
+        <mesh filename="package://nav2_gps_waypoint_follower_demo/meshes/${name}_${model}.dae" scale="1 1 1" />
       </geometry>
     </visual>
     <collision>

@@ -11,8 +11,8 @@ from px4_msgs.msg import (
 
 WHEELBASE = 0.6  # meters → adjust to your rover
 
-class TwistToPX4Rover(Node):
 
+class TwistToPX4Rover(Node):
     def __init__(self):
         super().__init__("twist_to_px4_rover")
 
@@ -73,7 +73,6 @@ class TwistToPX4Rover(Node):
     # ------------------------
 
     def timer_cb(self):
-
         if self.last_twist is None:
             return
 
@@ -119,6 +118,7 @@ def main():
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == "__main__":
     main()
