@@ -32,7 +32,6 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # Get the launch directory
     gps_wpf_dir = get_package_share_directory("nav2_gps_waypoint_follower_demo")
-    simu_dir = get_package_share_directory("nav2_minimal_tb3_sim")
 
     namespace = LaunchConfiguration("namespace")
     robot_name = LaunchConfiguration("robot_name")
@@ -114,10 +113,7 @@ def generate_launch_description():
     )
 
     set_env_vars_resources = AppendEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH", os.path.join(gps_wpf_dir, "models")
-    )
-    set_env_vars_resources2 = AppendEnvironmentVariable(
-        "GZ_SIM_RESOURCE_PATH", str(Path(os.path.join(simu_dir)).parent.resolve())
+        "GZ_SIM_RESOURCE_PATH", [os.path.join(gps_wpf_dir, "models"),os.path.join(gps_wpf_dir, "meshes"),os.path.join(gps_wpf_dir, "worlds"),os.path.join(gps_wpf_dir, "urdf")]
     )
 
     # Create the launch description and populate
@@ -127,7 +123,6 @@ def generate_launch_description():
     ld.add_action(declare_robot_sdf_cmd)
 
     ld.add_action(set_env_vars_resources)
-    ld.add_action(set_env_vars_resources2)
 
     ld.add_action(bridge)
     ld.add_action(spawn_model)
