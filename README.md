@@ -52,6 +52,7 @@ graph TD
     subgraph Cloud [Cloud: Operations Center]
         WebUI[Web Interface]
         Planner[Mission Planner]
+        Registry[Container Registry]
     end
 
     %% ===========================
