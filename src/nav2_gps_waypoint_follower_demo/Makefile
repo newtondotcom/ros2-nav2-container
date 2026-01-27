@@ -1,3 +1,5 @@
+first:
+	gz sim -v4 /workspaces/ros2-devcontainer/src/nav2_gps_waypoint_follower_demo/worlds/tb3_sonoma_raceway.sdf.xacro
 pre:
 	ros2 launch nav2_gps_waypoint_follower_demo gazebo_gps_world.launch.py
 
