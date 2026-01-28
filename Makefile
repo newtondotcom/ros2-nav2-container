@@ -1,5 +1,11 @@
 nav2:
-	git clone https://github.com/ros-navigation/navigation2.git src/navigation2
+	git clone https://github.com/ros-navigation/navigation2.git --branch main src/navigation2
+	git clone https://github.com/ros-navigation/nav2_minimal_turtlebot_simulation.git --branch main src/nav2_minimal_turtlebot_simulation
+	rosdep install -r -y \
+	--from-paths src \
+	--ignore-src
+	colcon build \
+	--symlink-install
 
 clean:
 	rm -rf src/navigation2
