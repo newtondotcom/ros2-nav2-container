@@ -67,7 +67,7 @@ graph TD
     %% ===========================
     %% SENSOR DATA
     %% ===========================
-    GNSS <---|LoRaWAN / RF / WiFi| BaseRTK   
+    BaseRTK -->|LoRaWAN / RF / WiFi| GNSS 
     GNSS -->|/gps/fix:sensor_msgs/NavSatFix| PX4
     PX4 -->|/fmu/out/vehicle_GNSS_position:sensor_msgs/NavSatFix| Bridge
     PX4 -->|/fmu/out/vehicle_odometry:nav_msgs/Odometry| Bridge
