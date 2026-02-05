@@ -3,6 +3,7 @@
     "privileged": true,
     "remoteUser": "rosuser", // Make sure this is the same as the username in the Dockerfile and mounts below
     "build": {
+		"context": "..",
         "dockerfile": "Dockerfile",
         "args": {
             // If needed, override target container architecture. 
@@ -10,6 +11,9 @@
             // "TARGETARCH": "amd64" // amd64 or arm64 
         }
     },
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
     "customizations": {
         "vscode": {
             "extensions":[
@@ -21,27 +25,42 @@
                 "ms-vscode.cpptools-extension-pack",
                 "ms-iot.vscode-ros"
             ]
-        }
+        },
+		"settings": {
+			"terminal.integrated.defaultProfile.linux": "bash",
+			"python.defaultInterpreterPath": "/usr/bin/python3",
+			"python.pythonPath": "/usr/bin/python3"
+		}
     },
     "containerEnv": {
         "ROS_DOMAIN_ID": "42",
         "XDG_RUNTIME_DIR": "/tmp",
         "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
-        "GZ_RENDER_ENGINE": "ogre2"
+        "GZ_RENDER_ENGINE": "ogre2",
+        "DISPLAY": "${localEnv:DISPLAY}",
+		"QT_X11_NO_MITSHM": "1",
+		"NF": "expandable_segments:True"
     },
     "runArgs": [
-        "--net=host",
+        "--network=host",
         "--cap-add=SYS_PTRACE",
-        "--security-opt", "seccomp=unconfined",        
-        "--security-opt", "seccomp=unconfined",
+        "--security-opt", "seccomp=unconfined",     
         "--device=/dev/dri",
+        "--group-add=video",
+		"--privileged",
+		"--gpus", "all",
         "-e", "DISPLAY",
-        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
-        "--group-add=video"
+		"-e", "QT_X11_NO_MITSHM=1",
+		"-e", "NVIDIA_VISIBLE_DEVICES=all",
+		"-e", "NVIDIA_DRIVER_CAPABILITIES=compute,utility",
+		"-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
+		"-v", "${env:HOME}${env:USERPROFILE}/.Xauthority:/home/ros/.Xauthority:ro"
     ],
     "mounts": [
         "source=${localWorkspaceFolder}/.cache,target=/home/rosuser/.cache,type=bind",
         "source=${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY},target=/tmp/${localEnv:WAYLAND_DISPLAY},type=bind"
     ],
+	"initializeCommand": "xhost +local: 2>/dev/null || true",
+	"postCreateCommand": "git config --global --add safe.directory /workspaces && git config --global core.fileMode false",
     "onCreateCommand": "scripts/init-container.sh"
 }
